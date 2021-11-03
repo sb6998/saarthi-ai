@@ -58,21 +58,20 @@ class apiViewSet(APIView):
 class apiExternalView(APIView):
     def get(self, request, id = None):
         try:
-            name = request.GET.get('name',None)
-            name!=None:
-            items = requests.get("https://anapioficeandfire.com/api/books?name="+name).json()
-            data = []
-            for item in items:
-                data.append({'name':item['name'],'isbn':item['isbn'],'authors':item['authors'],'number_of_pages':item['numberOfPages'],'publisher':item['publisher'],'country':item['country'],'release_date':item['released']})
-            serializer = apiViewSerializer(data, many=True).data
-            print(serializer)
-            return Response({"status_code": status.HTTP_200_OK, "status":"success", "data": serializer})
-        except Exception as e:
-            if id!=None:
+            if id==None:
+                name = request.GET.get('name',None)
+                items = requests.get("https://anapioficeandfire.com/api/books?name="+name).json()
+                data = []
+                for item in items:
+                    data.append({'name':item['name'],'isbn':item['isbn'],'authors':item['authors'],'number_of_pages':item['numberOfPages'],'publisher':item['publisher'],'country':item['country'],'release_date':item['released']})
+                serializer = apiViewSerializer(data, many=True).data
+                return Response({"status_code": status.HTTP_200_OK, "status":"success", "data": serializer})
+            else:
                 items = requests.get("https://anapioficeandfire.com/api/books/"+str(id)).json()
                 data = []
                 for item in items:
                     data.append({'name':item['name'],'isbn':item['isbn'],'authors':item['authors'],'number_of_pages':item['numberOfPages'],'publisher':item['publisher'],'country':item['country'],'release_date':item['released']})
                 serializer = apiViewSerializer(data, many=True).data
                 return Response({"status_code": status.HTTP_200_OK, "status":"success", "data": serializer})
+        except Exception as e:
             return Response({"status_code": status.HTTP_200_OK, "status":"success", "data": []})
