@@ -58,10 +58,10 @@ class apiViewSet(APIView):
 class apiExternalView(APIView):
     def get(self, request, id = None):
         name = request.GET.get('name',None)
-        if name:
+        if name!=None:
             items = requests.get("https://anapioficeandfire.com/api/books?name="+name).json()
         else:
-            items = requests.get("https://anapioficeandfire.com/api/books/"+id).json()
+            items = requests.get("https://anapioficeandfire.com/api/books/"+str(id)).json()
         data = []
         for item in items:
             data.append({'name':item['name'],'isbn':item['isbn'],'authors':item['authors'],'number_of_pages':item['numberOfPages'],'publisher':item['publisher'],'country':item['country'],'release_date':item['released']})
