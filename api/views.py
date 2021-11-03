@@ -37,10 +37,13 @@ class apiViewSet(APIView):
             return Response({"status_code": status.HTTP_200_OK, "status":"success", "data": []})
     
     def delete(self, request, id=None):
-        item = get_object_or_404(api, id=id)
-        name = item.name
-        item.delete()
-        return Response({"status_code": status.HTTP_200_OK, "status":"success","message":"The book {} was deleted successfully".format(name), "data":[]})
+        try:
+            item = get_object_or_404(api, id=id)
+            name = item.name
+            item.delete()
+            return Response({"status_code": status.HTTP_200_OK, "status":"success","message":"The book {} was deleted successfully".format(name), "data":[]})
+        except Exception as e:
+            return Response({"status_code": status.HTTP_200_OK, "status":"Id does not exist", "data": []})
 
     def patch(self, request, id=None):
         item = api.objects.get(id=id)
@@ -55,7 +58,10 @@ class apiViewSet(APIView):
 class apiExternalView(APIView):
     def get(self, request, id = None):
         name = request.GET.get('name',None)
-        items = requests.get("https://anapioficeandfire.com/api/books?name="+name).json()
+        if name:
+            items = requests.get("https://anapioficeandfire.com/api/books?name="+name).json()
+        else:
+            items = requests.get("https://anapioficeandfire.com/api/books/"+id).json()
         data = []
         for item in items:
             data.append({'name':item['name'],'isbn':item['isbn'],'authors':item['authors'],'number_of_pages':item['numberOfPages'],'publisher':item['publisher'],'country':item['country'],'release_date':item['released']})
