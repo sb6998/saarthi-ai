@@ -43,7 +43,7 @@ class apiViewSet(APIView):
         return Response({"status_code": status.HTTP_200_OK, "status":"success","message":"The book {} was deleted successfully".format(name), "data":[]})
 
     def patch(self, request, id=None):
-        id_data = api.objects.get(id=id)
+        item = api.objects.get(id=id)
         serializer = apiSerializer(item, data = request.data, partial = True)
 
         if serializer.is_valid():
